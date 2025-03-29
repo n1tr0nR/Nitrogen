@@ -1,0 +1,8 @@
+{
+  "nitrogen.midnightconfig.title": "Nitrogen",
+  "nitrogen.midnightconfig.category.main": "Nitrogen",
+  "nitrogen.midnightconfig.screenshake": "Screenshake Enabled",
+  "nitrogen.midnightconfig.screenshake.tooltip": "Toggles the shaking of the camera.",
+  "nitrogen.midnightconfig.mult": "Screenshake Multiplier",
+  "nitrogen.midnightconfig.mult.tooltip": "Changes the force of the screenshake."
+}

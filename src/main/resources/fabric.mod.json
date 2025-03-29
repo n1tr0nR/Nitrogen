@@ -3,24 +3,35 @@
 	"id": "nitrogen",
 	"version": "${version}",
 	"name": "Nitrogen",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Render utils and supporter benefits for my mods!",
 	"authors": [
-		"Me!"
+		"Nitron"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"YouTube": "https://www.youtube.com/@nitron_rbn"
 	},
-	"license": "CC0-1.0",
+	"license": "AAR",
 	"icon": "assets/nitrogen/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			"com.nitron.nitrogen.Nitrogen"
 		],
-		"fabric-datagen": [
-			"com.nitron.nitrogen.NitrogenDataGenerator"
+		"client": [
+			"com.nitron.nitrogen.NitrogenClient"
+		],
+		"modmenu": [
+			"com.nitron.nitrogen.config.ModMenuInit"
 		]
+	},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"My Youtube": "https://www.youtube.com/@nitron_rbn",
+				"Join the Discord!": "https://discord.gg/5vkhxuAkGC"
+			},
+			"update_checker": false
+		}
 	},
 	"mixins": [
 		"nitrogen.mixins.json"
@@ -30,8 +41,5 @@
 		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	}
 }
