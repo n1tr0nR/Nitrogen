@@ -10,7 +10,7 @@
 	"contact": {
 		"YouTube": "https://www.youtube.com/@nitron_rbn"
 	},
-	"license": "AAR",
+	"license": "ARR",
 	"icon": "assets/nitrogen/icon.png",
 	"environment": "*",
 	"entrypoints": {
