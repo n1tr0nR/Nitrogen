@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.nitron.nitrogen.Nitrogen;
+import com.nitron.nitrogen.util.interfaces.PlayerInfo;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.io.IOException;
@@ -14,7 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SupporterUtils {
+    private static List<PlayerInfo> cachedPlayers = new ArrayList<>();
+    private static long lastFetchTime = 0;
+    private static final long CACHE_DURATION = 5 * 60 * 1000;
+    public static boolean CRASH_CONTROL = false;
+
     public static List<PlayerInfo> fetchPlayers() {
+        long now = System.currentTimeMillis();
+        if (!cachedPlayers.isEmpty() && (now - lastFetchTime < CACHE_DURATION)) {
+            return cachedPlayers;
+        }
+
         List<PlayerInfo> players = new ArrayList<>();
         try {
             URL url = new URL("https://raw.githubusercontent.com/n1tr0nR/Data/main/players.json");
@@ -28,16 +39,17 @@ public class SupporterUtils {
                 InputStreamReader reader = new InputStreamReader(connection.getInputStream());
                 JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
 
-                // check if "players" exists and is an array
                 if (jsonObject.has("players") && jsonObject.get("players").isJsonArray()) {
                     JsonArray playerArray = jsonObject.getAsJsonArray("players");
-
                     for (var element : playerArray) {
                         JsonObject playerObj = element.getAsJsonObject();
                         String uuid = playerObj.get("uuid").getAsString();
                         String username = playerObj.get("username").getAsString();
                         players.add(new PlayerInfo(uuid, username));
                     }
+
+                    cachedPlayers = players;  // update cache
+                    lastFetchTime = now;      // update timestamp
                 } else {
                     Nitrogen.LOGGER.error("Error: 'players' field is missing or not an array!");
                 }
@@ -49,7 +61,8 @@ public class SupporterUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return players;
+
+        return cachedPlayers; // return old cache if error occurs
     }
 
     public static boolean isPlayerSupporter(PlayerEntity player){
@@ -60,6 +73,4 @@ public class SupporterUtils {
         }
         return false;
     }
-
-    public static List<PlayerInfo> list = SupporterUtils.fetchPlayers();
 }

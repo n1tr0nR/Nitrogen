@@ -1,6 +1,6 @@
 package com.nitron.nitrogen.mixin;
 
-import com.nitron.nitrogen.util.ColorableItem;
+import com.nitron.nitrogen.util.interfaces.ColorableItem;
 import com.nitron.nitrogen.util.client.NitrogenContext;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;

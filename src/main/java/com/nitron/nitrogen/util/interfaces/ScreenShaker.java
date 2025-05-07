@@ -1,4 +1,4 @@
-package com.nitron.nitrogen.util;
+package com.nitron.nitrogen.util.interfaces;
 
 public interface ScreenShaker {
     default boolean isScreenShaking(){

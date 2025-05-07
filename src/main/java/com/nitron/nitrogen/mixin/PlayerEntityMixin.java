@@ -1,7 +1,7 @@
 package com.nitron.nitrogen.mixin;
 
 import com.nitron.nitrogen.Nitrogen;
-import com.nitron.nitrogen.util.ScreenShaker;
+import com.nitron.nitrogen.util.interfaces.ScreenShaker;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;

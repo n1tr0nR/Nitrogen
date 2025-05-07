@@ -1,6 +1,6 @@
 package com.nitron.nitrogen.util.client;
 
-import com.nitron.nitrogen.util.ColorableItem;
+import com.nitron.nitrogen.util.interfaces.ColorableItem;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
@@ -136,9 +136,9 @@ public class NitrogenContext {
         int k = width + 3 + 3;
         int l = height + 3 + 3;
         if (stack.getItem() instanceof ColorableItem colorableItem){
-            int startColor = colorableItem.startColor();
-            int endColor = colorableItem.endColor();
-            int bgColor = colorableItem.backgroundColor();
+            int startColor = colorableItem.startColor(stack);
+            int endColor = colorableItem.endColor(stack);
+            int bgColor = colorableItem.backgroundColor(stack);
 
             renderHorizontalLine(context, i, j - 1, k, z, bgColor);
             renderHorizontalLine(context, i, j + l, k, z, bgColor);

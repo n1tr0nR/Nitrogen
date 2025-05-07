@@ -1,7 +1,7 @@
 package com.nitron.nitrogen.mixin;
 
 import com.nitron.nitrogen.config.Config;
-import com.nitron.nitrogen.util.ScreenShaker;
+import com.nitron.nitrogen.util.interfaces.ScreenShaker;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
