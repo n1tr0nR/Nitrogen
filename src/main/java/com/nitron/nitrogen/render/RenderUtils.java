@@ -1,19 +1,19 @@
 package com.nitron.nitrogen.render;
 
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+
+import java.util.*;
 
 public class RenderUtils {
     /**
@@ -25,9 +25,9 @@ public class RenderUtils {
      * @param center    BlockPos to center the cube
      * @param inflation Half-size of the cube; 0.5 = normal block size
      */
-    public static void renderSolidColorCube(MatrixStack matrices, VertexConsumer vertices, int color, BlockPos center, float inflation) {
+    public static void renderSolidColorCube(MatrixStack matrices, VertexConsumer vertices, int color, Vec3d center, float inflation) {
         MatrixStack.Entry entry = matrices.peek();
-        float x0 = center.getX() + 0.5f - inflation; float x1 = center.getX() + 0.5f + inflation; float y0 = center.getY() + 0.5f - inflation; float y1 = center.getY() + 0.5f + inflation; float z0 = center.getZ() + 0.5f - inflation; float z1 = center.getZ() + 0.5f + inflation;
+        float x0 = (float) (center.getX() + 0.5f - inflation); float x1 = (float) (center.getX() + 0.5f + inflation); float y0 = (float) (center.getY() + 0.5f - inflation); float y1 = (float) (center.getY() + 0.5f + inflation); float z0 = (float) (center.getZ() + 0.5f - inflation); float z1 = (float) (center.getZ() + 0.5f + inflation);
         renderQuad(entry, vertices, color, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
         renderQuad(entry, vertices, color, x1, y0, z0, x0, y0, z0, x0, y1, z0, x1, y1, z0);
         renderQuad(entry, vertices, color, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0);
@@ -288,5 +288,108 @@ public class RenderUtils {
                     x,  yTip,  z,
                     u0, v0, u1, v1);
         }
+    }
+
+
+    /**
+     * Renders a solid, double-sided textured sphere centered at the given BlockPos with rotation.
+     *
+     * @param matrices  The MatrixStack
+     * @param vertexConsumer  The VertexConsumer
+     * @param camera    The rendering camera
+     * @param entity    The Entity with the trail
+     * @param tickDelta   The Tickdelta
+     * @param trailPositions  The trail position array
+     * @param maxTrailLength  How many points in the trail
+     * @param startWidth  Starting width
+     * @param endWidth  Ending Width
+     * @param endAlpha  Ending Alpha
+     * @param startAlpha  Starting Alpha
+     * @param red  Red
+     * @param green  Green
+     * @param blue  Blue
+     * @param offset  Offset of the trail
+     */
+    public static void renderEntityTrail(
+            MatrixStack matrices,
+            VertexConsumer vertexConsumer,
+            Camera camera,
+            Entity entity,
+            float tickDelta,
+            Deque<Vec3d> trailPositions,
+            int maxTrailLength,
+            float startWidth,
+            float endWidth,
+            int endAlpha,
+            int startAlpha,
+            float red,
+            float green,
+            float blue,
+            Vec3d offset
+    ) {
+        Vec3d currentPos = new Vec3d(
+                MathHelper.lerp(tickDelta, entity.prevX, entity.getX()),
+                MathHelper.lerp(tickDelta, entity.prevY, entity.getY()),
+                MathHelper.lerp(tickDelta, entity.prevZ, entity.getZ())
+        ).add(offset);
+
+        trailPositions.addFirst(currentPos);
+        while (trailPositions.size() > maxTrailLength) {
+            trailPositions.removeLast();
+        }
+
+        if (trailPositions.size() < 2) return;
+
+        Vec3d camPos = camera.getPos();
+        List<Vec3d> positions = new ArrayList<>(trailPositions);
+
+        matrices.push();
+        matrices.translate(-camPos.x, -camPos.y, -camPos.z);
+        MatrixStack.Entry matrixEntry = matrices.peek();
+
+        for (int i = 0; i < positions.size() - 1; i++) {
+            Vec3d p1 = positions.get(i);
+            Vec3d p2 = positions.get(i + 1);
+
+            float t = i / (float) (positions.size() - 2);
+            float width = MathHelper.lerp(t, startWidth, endWidth);
+            int alpha = (int) MathHelper.lerp(t, startAlpha, endAlpha);
+            alpha = MathHelper.clamp(alpha, 0, 255);
+
+            Vec3d segmentDir = p2.subtract(p1).normalize();
+
+            Vec3d toCamera = p1.subtract(camPos).normalize();
+            Vec3d camRight = segmentDir.crossProduct(toCamera).normalize().multiply(width);
+
+            if (camRight.lengthSquared() < 1e-6) {
+                camRight = segmentDir.crossProduct(new Vec3d(0, 1, 0)).normalize().multiply(width);
+            }
+
+            Vec3d p1a = p1.add(camRight);
+            Vec3d p1b = p1.subtract(camRight);
+            Vec3d p2a = p2.add(camRight);
+            Vec3d p2b = p2.subtract(camRight);
+
+            float u1 = 0.0f, u2 = 1.0f;
+            float v1 = i / (float) (positions.size() - 1);
+            float v2 = (i + 1) / (float) (positions.size() - 1);
+
+            renderVertex(matrixEntry, vertexConsumer, (float) p1a.x, (float) p1a.y, (float) p1a.z, u1, v1, alpha, red, green, blue);
+            renderVertex(matrixEntry, vertexConsumer, (float) p1b.x, (float) p1b.y, (float) p1b.z, u2, v1, alpha, red, green, blue);
+            renderVertex(matrixEntry, vertexConsumer, (float) p2b.x, (float) p2b.y, (float) p2b.z, u2, v2, alpha, red, green, blue);
+            renderVertex(matrixEntry, vertexConsumer, (float) p2a.x, (float) p2a.y, (float) p2a.z, u1, v2, alpha, red, green, blue);
+
+        }
+
+        matrices.pop();
+    }
+
+    private static void renderVertex(MatrixStack.Entry matrix, VertexConsumer vertices, float x, float y, float z, float u, float v, float alpha, float red, float green, float blue) {
+        vertices.vertex(matrix, x, y, z)
+                .color(red, green, blue, alpha)
+                .texture(u, v)
+                .overlay(OverlayTexture.DEFAULT_UV)
+                .light(0xF000F0)
+                .normal(matrix, 0, 1, 0);
     }
 }

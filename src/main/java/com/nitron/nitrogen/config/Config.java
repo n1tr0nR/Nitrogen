@@ -7,4 +7,5 @@ public class Config extends MidnightConfig {
 
     @Entry(category = MAIN) public static boolean screenshake = true;
     @Entry(category = MAIN) public static float mult = 1.0F;
+    @Entry(category = MAIN) public static boolean trailRenderers = true;
 }

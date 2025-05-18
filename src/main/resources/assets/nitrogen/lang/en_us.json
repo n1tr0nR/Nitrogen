@@ -4,5 +4,7 @@
   "nitrogen.midnightconfig.screenshake": "Screenshake Enabled",
   "nitrogen.midnightconfig.screenshake.tooltip": "Toggles the shaking of the camera.",
   "nitrogen.midnightconfig.mult": "Screenshake Multiplier",
-  "nitrogen.midnightconfig.mult.tooltip": "Changes the force of the screenshake."
+  "nitrogen.midnightconfig.mult.tooltip": "Changes the force of the screenshake.",
+  "nitrogen.midnightconfig.trailRenderers": "Trail Renderers",
+  "nitrogen.midnightconfig.trailRenderers.tooltip": "Makes some features have trail renderers."
 }
