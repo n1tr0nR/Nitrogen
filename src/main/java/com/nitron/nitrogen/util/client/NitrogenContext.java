@@ -33,13 +33,13 @@ public class NitrogenContext {
     }
 
     public void drawTooltip(TextRenderer textRenderer, List<Text> text, Optional<TooltipData> data, int x, int y, ItemStack stack) {
-        List<TooltipComponent> list = (List)text.stream().map(Text::asOrderedText).map(TooltipComponent::of).collect(Util.toArrayList());
+        List<TooltipComponent> list = text.stream().map(Text::asOrderedText).map(TooltipComponent::of).collect(Util.toArrayList());
         data.ifPresent((datax) -> list.add(list.isEmpty() ? 0 : 1, TooltipComponent.of(datax)));
         this.drawTooltip(textRenderer, list, x, y, HoveredTooltipPositioner.INSTANCE, stack);
     }
 
     public void drawTooltipFree(TextRenderer textRenderer, List<Text> text, Optional<TooltipData> data, int x, int y, ItemStack stack) {
-        List<TooltipComponent> list = (List)text.stream().map(Text::asOrderedText).map(TooltipComponent::of).collect(Util.toArrayList());
+        List<TooltipComponent> list = text.stream().map(Text::asOrderedText).map(TooltipComponent::of).collect(Util.toArrayList());
         data.ifPresent((datax) -> list.add(list.isEmpty() ? 0 : 1, TooltipComponent.of(datax)));
         this.drawTooltipFree(textRenderer, list, x, y, HoveredTooltipPositioner.INSTANCE, stack);
     }
@@ -55,32 +55,33 @@ public class NitrogenContext {
                     i = k;
                 }
 
-                j += tooltipComponent.getHeight();
+                j += tooltipComponent.getHeight(textRenderer);
             }
 
+            int l = i;
+            int m = j;
             Vector2ic vector2ic = positioner.getPosition(scaledWindowWidth, scaledWindowHeight, x, y, i, j);
             int n = vector2ic.x();
             int o = vector2ic.y();
             this.matrices.push();
-            int p = 400;
             int finalI = i;
             int finalJ = j;
-            context.draw(() -> render(context, n, o, finalI, finalJ, 400, stack));
+            context.draw((vertexConsumerProvider) -> render(context, n, o, finalI, finalJ, 400, stack));
             this.matrices.translate(0.0F, 0.0F, 400.0F);
             int q = o;
 
             for(int r = 0; r < components.size(); ++r) {
-                TooltipComponent tooltipComponent2 = (TooltipComponent)components.get(r);
+                TooltipComponent tooltipComponent2 = components.get(r);
                 tooltipComponent2.drawText(textRenderer, n, q, this.matrices.peek().getPositionMatrix(), this.vertexConsumers);
-                q += tooltipComponent2.getHeight() + (r == 0 ? 2 : 0);
+                q += tooltipComponent2.getHeight(textRenderer) + (r == 0 ? 2 : 0);
             }
 
             q = o;
 
             for(int r = 0; r < components.size(); ++r) {
-                TooltipComponent tooltipComponent2 = (TooltipComponent)components.get(r);
-                tooltipComponent2.drawItems(textRenderer, n, q, context);
-                q += tooltipComponent2.getHeight() + (r == 0 ? 2 : 0);
+                TooltipComponent tooltipComponent2 = components.get(r);
+                tooltipComponent2.drawItems(textRenderer, n, q, l, m, context);
+                q += tooltipComponent2.getHeight(textRenderer) + (r == 0 ? 2 : 0);
             }
 
             this.matrices.pop();
@@ -98,32 +99,33 @@ public class NitrogenContext {
                     i = k;
                 }
 
-                j += tooltipComponent.getHeight();
+                j += tooltipComponent.getHeight(textRenderer);
             }
 
+            int l = i;
+            int m = j;
             Vector2ic vector2ic = positioner.getPosition(scaledWindowWidth, scaledWindowHeight, x, y, i, j);
             int n = x + 12;
             int o = vector2ic.y();
             this.matrices.push();
-            int p = 400;
             int finalI = i;
             int finalJ = j;
-            context.draw(() -> render(context, n, o, finalI, finalJ, 400, stack));
+            context.draw((vertexConsumerProvider) -> render(context, n, o, finalI, finalJ, 400, stack));
             this.matrices.translate(0.0F, 0.0F, 400.0F);
             int q = o;
 
             for(int r = 0; r < components.size(); ++r) {
-                TooltipComponent tooltipComponent2 = (TooltipComponent)components.get(r);
+                TooltipComponent tooltipComponent2 = components.get(r);
                 tooltipComponent2.drawText(textRenderer, n, q, this.matrices.peek().getPositionMatrix(), this.vertexConsumers);
-                q += tooltipComponent2.getHeight() + (r == 0 ? 2 : 0);
+                q += tooltipComponent2.getHeight(textRenderer) + (r == 0 ? 2 : 0);
             }
 
             q = o;
 
             for(int r = 0; r < components.size(); ++r) {
-                TooltipComponent tooltipComponent2 = (TooltipComponent)components.get(r);
-                tooltipComponent2.drawItems(textRenderer, n, q, context);
-                q += tooltipComponent2.getHeight() + (r == 0 ? 2 : 0);
+                TooltipComponent tooltipComponent2 = components.get(r);
+                tooltipComponent2.drawItems(textRenderer, n, q, l, m, context);
+                q += tooltipComponent2.getHeight(textRenderer) + (r == 0 ? 2 : 0);
             }
 
             this.matrices.pop();
