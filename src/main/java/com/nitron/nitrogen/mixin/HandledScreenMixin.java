@@ -39,7 +39,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
                 context.getScaledWindowHeight(),
                 context.getMatrices(),
                 context,
-                context.getVertexConsumers());
+                ((DrawContextAccessor) context).getVertexConsumers());
         if (handler.getCursorStack().isEmpty() && this.focusedSlot != null && this.focusedSlot.hasStack()) {
             ItemStack itemStack = this.focusedSlot.getStack();
             if (itemStack.getItem() instanceof ColorableItem){

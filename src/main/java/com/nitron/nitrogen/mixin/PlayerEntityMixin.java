@@ -80,8 +80,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ScreenSh
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
     public void nitrogen$writeNBT(NbtCompound nbt, CallbackInfo ci){
-        setScreenShakeDuration(nbt.getInt("ScreenShakeDuration"));
-        setScreenShakeIntensity(nbt.getFloat("ScreenShakeIntensity"));
+        setScreenShakeDuration(nbt.getInt("ScreenShakeDuration").isPresent() ? nbt.getInt("ScreenShakeDuration").get() : 0);
+        setScreenShakeIntensity(nbt.getFloat("ScreenShakeIntensity").isPresent() ? nbt.getFloat("ScreenShakeIntensity").get() : 0);
     }
 
     @Unique

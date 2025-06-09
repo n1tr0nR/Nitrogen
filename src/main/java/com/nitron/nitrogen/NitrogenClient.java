@@ -59,7 +59,7 @@ public class NitrogenClient implements ClientModInitializer {
                             context.consumers().getBuffer(RenderLayer.getEntitySolid(Identifier.of(Nitrogen.MOD_ID, "textures/render/color.png"))),
                             context.camera(),
                             entity,
-                            context.tickCounter().getTickDelta(false),
+                            context.tickCounter().getTickProgress(false),
                             trail,
                             200,
                             0.1f,
@@ -85,7 +85,7 @@ public class NitrogenClient implements ClientModInitializer {
                             context.consumers().getBuffer(RenderLayer.getEntityTranslucentEmissive(Identifier.of(Nitrogen.MOD_ID, "textures/render/color.png"))),
                             context.camera(),
                             entity,
-                            context.tickCounter().getTickDelta(false),
+                            context.tickCounter().getTickProgress(false),
                             trail,
                             50,
                             0.1f,
@@ -111,7 +111,7 @@ public class NitrogenClient implements ClientModInitializer {
                             context.consumers().getBuffer(RenderLayer.getEntitySolid(Identifier.of(Nitrogen.MOD_ID, "textures/render/color.png"))),
                             context.camera(),
                             entity,
-                            context.tickCounter().getTickDelta(false),
+                            context.tickCounter().getTickProgress(false),
                             trail,
                             50,
                             0.05f,
@@ -137,16 +137,16 @@ public class NitrogenClient implements ClientModInitializer {
                             context.consumers().getBuffer(RenderLayer.getEntityTranslucentEmissive(Identifier.of(Nitrogen.MOD_ID, "textures/render/color.png"))),
                             context.camera(),
                             entity,
-                            context.tickCounter().getTickDelta(false),
+                            context.tickCounter().getTickProgress(false),
                             trail,
                             50,
                             0.1f,
                             0.001f,
                             255,
                             0,
-                            (float) color.x,
-                            (float) color.y,
-                            (float) color.z,
+                            color.x,
+                            color.y,
+                            color.z,
                             new Vec3d(0.0, 0, 0.0)
                     );
                 }
@@ -154,13 +154,13 @@ public class NitrogenClient implements ClientModInitializer {
                     Deque<Vec3d> trail = TRAILS.computeIfAbsent(entity.getUuid(), id -> new ArrayDeque<>());
                     Vector3f color = new Vector3f((float) 255 / 255, (float) 255 / 255, (float) 255 / 255);
 
-                    if (entity.isFallFlying()){
+                    if (entity.isGliding()){
                         RenderUtils.renderEntityTrail(
                                 context.matrixStack(),
                                 context.consumers().getBuffer(RenderLayer.getEntityTranslucentEmissive(Identifier.of(Nitrogen.MOD_ID, "textures/render/color.png"))),
                                 context.camera(),
                                 entity,
-                                context.tickCounter().getTickDelta(false),
+                                context.tickCounter().getTickProgress(false),
                                 trail,
                                 50,
                                 0.2f,
