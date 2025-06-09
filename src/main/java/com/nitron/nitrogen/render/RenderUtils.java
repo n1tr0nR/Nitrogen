@@ -328,9 +328,9 @@ public class RenderUtils {
             Vec3d offset
     ) {
         Vec3d currentPos = new Vec3d(
-                MathHelper.lerp(tickDelta, entity.prevX, entity.getX()),
-                MathHelper.lerp(tickDelta, entity.prevY, entity.getY()),
-                MathHelper.lerp(tickDelta, entity.prevZ, entity.getZ())
+                MathHelper.lerp(tickDelta, entity.lastX, entity.getX()),
+                MathHelper.lerp(tickDelta, entity.lastY, entity.getY()),
+                MathHelper.lerp(tickDelta, entity.lastZ, entity.getZ())
         ).add(offset);
 
         trailPositions.addFirst(currentPos);
