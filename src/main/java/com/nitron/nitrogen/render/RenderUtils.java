@@ -347,6 +347,9 @@ public class RenderUtils {
         matrices.translate(-camPos.x, -camPos.y, -camPos.z);
         MatrixStack.Entry matrixEntry = matrices.peek();
 
+        Vec3d lastA = null;
+        Vec3d lastB = null;
+
         for (int i = 0; i < positions.size() - 1; i++) {
             Vec3d p1 = positions.get(i);
             Vec3d p2 = positions.get(i + 1);
@@ -357,13 +360,17 @@ public class RenderUtils {
             alpha = MathHelper.clamp(alpha, 0, 255);
 
             Vec3d segmentDir = p2.subtract(p1).normalize();
-
             Vec3d toCamera = p1.subtract(camPos).normalize();
-            Vec3d camRight = segmentDir.crossProduct(toCamera).normalize().multiply(width);
+            Vec3d camRight = segmentDir.crossProduct(toCamera);
 
             if (camRight.lengthSquared() < 1e-6) {
-                camRight = segmentDir.crossProduct(new Vec3d(0, 1, 0)).normalize().multiply(width);
+                camRight = segmentDir.crossProduct(new Vec3d(1, 0, 0));
+                if (camRight.lengthSquared() < 1e-6) {
+                    camRight = new Vec3d(0, 0, 1);
+                }
             }
+
+            camRight = camRight.normalize().multiply(width);
 
             Vec3d p1a = p1.add(camRight);
             Vec3d p1b = p1.subtract(camRight);
@@ -374,12 +381,17 @@ public class RenderUtils {
             float v1 = i / (float) (positions.size() - 1);
             float v2 = (i + 1) / (float) (positions.size() - 1);
 
-            renderVertex(matrixEntry, vertexConsumer, (float) p1a.x, (float) p1a.y, (float) p1a.z, u1, v1, alpha, red, green, blue);
-            renderVertex(matrixEntry, vertexConsumer, (float) p1b.x, (float) p1b.y, (float) p1b.z, u2, v1, alpha, red, green, blue);
-            renderVertex(matrixEntry, vertexConsumer, (float) p2b.x, (float) p2b.y, (float) p2b.z, u2, v2, alpha, red, green, blue);
-            renderVertex(matrixEntry, vertexConsumer, (float) p2a.x, (float) p2a.y, (float) p2a.z, u1, v2, alpha, red, green, blue);
+            if (lastA != null && lastB != null) {
+                renderVertex(matrixEntry, vertexConsumer, (float) lastA.x, (float) lastA.y, (float) lastA.z, u1, v1, alpha, red, green, blue);
+                renderVertex(matrixEntry, vertexConsumer, (float) lastB.x, (float) lastB.y, (float) lastB.z, u2, v1, alpha, red, green, blue);
+                renderVertex(matrixEntry, vertexConsumer, (float) p1b.x, (float) p1b.y, (float) p1b.z, u2, v2, alpha, red, green, blue);
+                renderVertex(matrixEntry, vertexConsumer, (float) p1a.x, (float) p1a.y, (float) p1a.z, u1, v2, alpha, red, green, blue);
+            }
 
+            lastA = p1a;
+            lastB = p1b;
         }
+
 
         matrices.pop();
     }
