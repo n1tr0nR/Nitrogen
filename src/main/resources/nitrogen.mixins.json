@@ -10,8 +10,6 @@
     "defaultRequire": 1
   },
   "client": [
-    "CameraMixin",
-    "DrawContextAccessor",
-    "HandledScreenMixin"
+    "CameraMixin"
   ]
 }

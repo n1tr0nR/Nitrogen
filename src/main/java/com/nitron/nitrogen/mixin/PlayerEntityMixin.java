@@ -7,6 +7,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -72,16 +74,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ScreenSh
         builder.add(Nitrogen.SCREENSHAKE_DURATION, 0);
     }
 
-    @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
-    public void nitrogen$readNBT(NbtCompound nbt, CallbackInfo ci){
-        nbt.putInt("ScreenShakeDuration", getScreenShakeDuration());
-        nbt.putFloat("ScreenShakeIntensity", getScreenShakeIntensity());
+    @Inject(method = "readCustomData", at = @At("TAIL"))
+    public void nitrogen$readNBT(ReadView view, CallbackInfo ci){
+        setScreenShakeDuration(view.getInt("ScreenShakeDuration", 0));
+        setScreenShakeIntensity(view.getFloat("ScreenShakeIntensity", 0));
     }
 
-    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
-    public void nitrogen$writeNBT(NbtCompound nbt, CallbackInfo ci){
-        setScreenShakeDuration(nbt.getInt("ScreenShakeDuration").isPresent() ? nbt.getInt("ScreenShakeDuration").get() : 0);
-        setScreenShakeIntensity(nbt.getFloat("ScreenShakeIntensity").isPresent() ? nbt.getFloat("ScreenShakeIntensity").get() : 0);
+    @Inject(method = "writeCustomData", at = @At("TAIL"))
+    public void nitrogen$writeNBT(WriteView view, CallbackInfo ci){
+        view.putInt("ScreenShakeDuration", getScreenShakeDuration());
+        view.putFloat("ScreenShakeIntensity", getScreenShakeIntensity());
     }
 
     @Unique
