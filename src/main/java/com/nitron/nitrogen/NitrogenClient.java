@@ -1,7 +1,6 @@
 package com.nitron.nitrogen;
 import com.nitron.nitrogen.config.Config;
 import com.nitron.nitrogen.render.RenderUtils;
-import com.nitron.nitrogen.util.SupporterUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -31,14 +30,6 @@ public class NitrogenClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player != null && SupporterUtils.CRASH_CONTROL && !SupporterUtils.isPlayerSupporter(client.player)){
-                throw new RuntimeException("This is a Supporter only mod! Sorry!");
-            }
-        });
-
-
-
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
             MinecraftClient client = MinecraftClient.getInstance();
             Vec3d pos = client.player.getPos();
