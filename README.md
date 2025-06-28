@@ -11,7 +11,7 @@ repositories {
 
 // Add Nitrogen as a dependency in your environment
 dependencies {
-  modImplementation("maven.modrinth:nitrogen_rbn:${project.nitrogen version}")
+  modImplementation("maven.modrinth:nitrogen_rbn:${project.nitrogen_version}")
 }
 ```
 
